@@ -1,5 +1,10 @@
-import { Download, File, RefreshCw, Search, Trash2, Upload } from "lucide-react";
-import React from "react";
+import { File } from "lucide-react";
+import { useEffect, useState } from "react";
+import UploadedFile from "./UploadedFile";
+import { useAuth } from "react-oidc-context";
+import Functionalities from "./Functionalities";
+import { LoadingUI } from "../UI/LoadingUI";
+import { UnauthorizedUI } from "../UI/Unauthorized";
 
 interface FileItem {
     id: number;
@@ -10,9 +15,40 @@ interface FileItem {
 }
 
 export default function FileManager() {
-    const filteredFiles: any[] = [];
-    const [searchQuery, setSearchQuery] = React.useState<string>("");
-    const [isUploading, setIsUploading] = React.useState<boolean>(false);
+    const auth = useAuth();
+
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [isUploading, setIsUploading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+    const filteredFiles: any[] = []; // Assuming you'll have logic to populate this
+
+    useEffect(() => {
+        if (auth.user) {
+            setAccessToken(auth.user.id_token);
+        }
+    }, [auth.user]);
+
+    useEffect(() => {
+        async function testConnection() {
+            if (accessToken) {
+                try {
+                    setIsLoading(false);
+                    const res = await fetch("https://vib7rvzf3a.execute-api.ap-south-1.amazonaws.com/dev/", {
+                        method: "GET",
+                        headers: {
+                            "Auth-Token": `Bearer ${accessToken}`,
+                        },
+                    });
+                    const data = await res.json();
+                    console.log(data);
+                } catch (error) {
+                    console.log("Error: ", error);
+                }
+            }
+        }
+        testConnection();
+    }, [accessToken]);
 
     function getFileIcon(type: FileItem["type"]) {
         switch (type) {
@@ -27,47 +63,33 @@ export default function FileManager() {
         }
     }
 
-    function handleFileUpload() {}
-    function handleDeleteFile() {}
+    function handleFileUpload() {
+        // Implement file upload logic
+    }
+
+    function handleDeleteFile(id: number) {
+        // Implement file deletion logic
+    }
+
+    if (isLoading) {
+        return <LoadingUI />;
+    }
+
+    if (!auth.user) {
+        return <UnauthorizedUI />;
+    }
 
     return (
         <div className="flex-grow bg-white">
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
                     <h1 className="text-2xl md:text-3xl font-bold text-blue-900 mb-4 md:mb-0">Your S3 Files</h1>
-                    <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
-                        <div className="relative">
-                            <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search files..."
-                                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
-                                onChange={() => {}}
-                            />
-                        </div>
-                        <button
-                            onClick={() => {}}
-                            className="flex items-center justify-center px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50">
-                            <RefreshCw className="h-4 w-4 mr-2" />
-                            Refresh
-                        </button>
-                        <button
-                            onClick={() => {}}
-                            className="flex items-center justify-center px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800"
-                            disabled={isUploading}>
-                            {isUploading ? (
-                                <>
-                                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                                    Uploading...
-                                </>
-                            ) : (
-                                <>
-                                    <Upload className="h-4 w-4 mr-2" />
-                                    Upload Files
-                                </>
-                            )}
-                        </button>
-                    </div>
+                    <Functionalities
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        isUploading={isUploading}
+                        handleFileUpload={handleFileUpload}
+                    />
                 </div>
 
                 {/* File Listing */}
@@ -82,28 +104,12 @@ export default function FileManager() {
                     {filteredFiles.length > 0 ? (
                         <div className="divide-y divide-gray-200">
                             {filteredFiles.map((file) => (
-                                <div
-                                    key={file.id}
-                                    className="px-4 py-3 grid grid-cols-12 items-center hover:bg-gray-50">
-                                    <div className="col-span-6 md:col-span-5 flex items-center">
-                                        {getFileIcon(file.type)}
-                                        <span className="ml-2 truncate">{file.name}</span>
-                                    </div>
-                                    <div className="col-span-2 hidden md:block text-gray-500 text-sm">{file.size}</div>
-                                    <div className="col-span-3 md:col-span-3 text-gray-500 text-sm">
-                                        {file.uploaded}
-                                    </div>
-                                    <div className="col-span-3 md:col-span-2 flex space-x-2">
-                                        <button className="p-1 text-blue-600 hover:text-blue-800">
-                                            <Download className="h-5 w-5" />
-                                        </button>
-                                        <button
-                                            className="p-1 text-red-600 hover:text-red-800"
-                                            onClick={() => handleDeleteFile()}>
-                                            <Trash2 className="h-5 w-5" />
-                                        </button>
-                                    </div>
-                                </div>
+                                <UploadedFile
+                                    key={file.id} // Assuming your FileItem has an 'id'
+                                    data={file}
+                                    getFileIcon={getFileIcon}
+                                    handleDeleteFile={() => handleDeleteFile(file.id)}
+                                />
                             ))}
                         </div>
                     ) : (
