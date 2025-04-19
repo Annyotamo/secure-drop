@@ -1,17 +1,19 @@
 import { File } from "lucide-react";
 import { useEffect, useState } from "react";
-import UploadedFile from "./UploadedFile";
 import { useAuth } from "react-oidc-context";
 import Functionalities from "./Functionalities";
 import { LoadingUI } from "../UI/LoadingUI";
 import { UnauthorizedUI } from "../UI/Unauthorized";
+import UploadModal from "./UploadModal";
+import { useFileUpload } from "../../hooks/useFileUpload";
+import FileListing from "./FileListing";
 
 interface FileItem {
     id: number;
     name: string;
     size: string;
     uploaded: string;
-    type: "pdf" | "image" | "doc" | "other";
+    type: string;
 }
 
 export default function FileManager() {
@@ -21,7 +23,7 @@ export default function FileManager() {
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-    const filteredFiles: any[] = []; // Assuming you'll have logic to populate this
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
 
     useEffect(() => {
         if (auth.user) {
@@ -64,10 +66,23 @@ export default function FileManager() {
     }
 
     function handleFileUpload() {
-        // Implement file upload logic
+        setIsUploadModalOpen(true);
     }
 
-    function handleDeleteFile(id: number) {
+    async function handleUploadComplete(file: File, fileName: string, fileType: string) {
+        setIsUploading(true);
+
+        if (accessToken) {
+            const data = await useFileUpload(file, fileName, fileType, accessToken);
+            console.log(data);
+        }
+
+        setTimeout(() => {
+            setIsUploading(false);
+        }, 2000);
+    }
+
+    function handleDeleteFile(name: string) {
         // Implement file deletion logic
     }
 
@@ -93,32 +108,15 @@ export default function FileManager() {
                 </div>
 
                 {/* File Listing */}
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <div className="border-b border-gray-200 bg-gray-50 px-4 py-3 grid grid-cols-12 text-sm font-medium text-gray-500">
-                        <div className="col-span-6 md:col-span-5">File Name</div>
-                        <div className="col-span-2 hidden md:block">Size</div>
-                        <div className="col-span-3 md:col-span-3">Uploaded Date</div>
-                        <div className="col-span-3 md:col-span-2">Actions</div>
-                    </div>
-
-                    {filteredFiles.length > 0 ? (
-                        <div className="divide-y divide-gray-200">
-                            {filteredFiles.map((file) => (
-                                <UploadedFile
-                                    key={file.id} // Assuming your FileItem has an 'id'
-                                    data={file}
-                                    getFileIcon={getFileIcon}
-                                    handleDeleteFile={() => handleDeleteFile(file.id)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="px-4 py-8 text-center text-gray-500">
-                            {searchQuery ? "No files match your search" : "No files found in your S3 bucket"}
-                        </div>
-                    )}
-                </div>
+                <FileListing getFileIcon={getFileIcon} searchQuery={searchQuery} handleDeleteFile={handleDeleteFile} />
             </div>
+
+            {/* Upload Modal */}
+            <UploadModal
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+                onUpload={handleUploadComplete}
+            />
         </div>
     );
 }
