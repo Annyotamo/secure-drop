@@ -1,7 +1,7 @@
 import { Menu, Shield, X } from "lucide-react";
 import MobileNavbar from "./MobileNavbar";
 import Options from "./Options";
-import { AuthContextProps, useAuth } from "react-oidc-context";
+import { useAuth } from "react-oidc-context";
 
 interface navbarPropTypes {
     setMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,7 +49,7 @@ const Navbar = ({ setMobileMenuOpen, mobileMenuOpen }: navbarPropTypes) => {
             </div>
 
             {/* Mobile Navigation */}
-            {mobileMenuOpen && <MobileNavbar />}
+            {mobileMenuOpen && <MobileNavbar signIn={() => auth.signinRedirect()} signOut={() => signOutRedirect()} />}
         </nav>
     );
 };

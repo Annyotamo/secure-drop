@@ -1,7 +1,9 @@
 import { Upload } from "lucide-react";
 import HeroItem from "./HeroItem";
+import { useAuth } from "react-oidc-context";
 
 const HeroSection = () => {
+    const auth = useAuth();
     return (
         <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-16 md:py-24">
             <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
@@ -12,7 +14,7 @@ const HeroSection = () => {
                     </p>
                     <div className="flex">
                         <button
-                            onClick={() => {}}
+                            onClick={() => auth.signinRedirect()}
                             className="px-6 py-3 bg-blue-300 text-blue-900 rounded-md hover:bg-blue-200 transition-colors font-medium flex items-center">
                             <Upload className="h-5 w-5 mr-2" />
                             Get Started

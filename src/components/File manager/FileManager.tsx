@@ -7,6 +7,7 @@ import { UnauthorizedUI } from "../UI/Unauthorized";
 import UploadModal from "./UploadModal";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import FileListing from "./FileListing";
+import { queryClient } from "../../main";
 
 interface FileItem {
     id: number;
@@ -28,29 +29,9 @@ export default function FileManager() {
     useEffect(() => {
         if (auth.user) {
             setAccessToken(auth.user.id_token);
+            setIsLoading(false);
         }
     }, [auth.user]);
-
-    useEffect(() => {
-        async function testConnection() {
-            if (accessToken) {
-                try {
-                    setIsLoading(false);
-                    const res = await fetch("https://vib7rvzf3a.execute-api.ap-south-1.amazonaws.com/dev/", {
-                        method: "GET",
-                        headers: {
-                            "Auth-Token": `Bearer ${accessToken}`,
-                        },
-                    });
-                    const data = await res.json();
-                    console.log(data);
-                } catch (error) {
-                    console.log("Error: ", error);
-                }
-            }
-        }
-        testConnection();
-    }, [accessToken]);
 
     function getFileIcon(type: FileItem["type"]) {
         switch (type) {
@@ -65,16 +46,13 @@ export default function FileManager() {
         }
     }
 
-    function handleFileUpload() {
-        setIsUploadModalOpen(true);
-    }
-
     async function handleUploadComplete(file: File, fileName: string, fileType: string) {
         setIsUploading(true);
 
         if (accessToken) {
             const data = await useFileUpload(file, fileName, fileType, accessToken);
             console.log(data);
+            queryClient.invalidateQueries({ queryKey: ["s3-data"] });
         }
 
         setTimeout(() => {
@@ -82,8 +60,18 @@ export default function FileManager() {
         }, 2000);
     }
 
-    function handleDeleteFile(name: string) {
-        // Implement file deletion logic
+    async function handleDeleteFile(name: string, type: string) {
+        const res = await fetch(
+            `https://vib7rvzf3a.execute-api.ap-south-1.amazonaws.com/dev/upload?fileName=${name}.${type}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Auth-Token": auth.user?.id_token || "",
+                },
+            }
+        );
+        queryClient.invalidateQueries({ queryKey: ["s3-data"] });
+        console.log(await res.json());
     }
 
     if (isLoading) {
@@ -103,7 +91,7 @@ export default function FileManager() {
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         isUploading={isUploading}
-                        handleFileUpload={handleFileUpload}
+                        handleFileUpload={() => setIsUploadModalOpen(true)}
                     />
                 </div>
 

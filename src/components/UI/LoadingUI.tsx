@@ -1,17 +1,35 @@
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react"; // Using Loader2 for smoother spin animation
 
 export function LoadingUI() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-            <div className="p-8 bg-white rounded-lg shadow-md flex flex-col items-center">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] bg-white rounded-lg shadow overflow-hidden p-8">
+            {/* Header (matches FileListing's style) */}
+            <div className="w-full border-b border-gray-200 bg-gray-50 px-4 py-3 grid grid-cols-12 text-sm font-medium text-gray-500 mb-6">
+                <div className="col-span-6 md:col-span-5">File Name</div>
+                <div className="col-span-2 hidden md:block">Size</div>
+                <div className="col-span-3 md:col-span-3">Uploaded Date</div>
+                <div className="col-span-3 md:col-span-2">Actions</div>
+            </div>
+
+            {/* Animated Loading Content */}
+            <div className="flex flex-col items-center justify-center space-y-4 py-12">
                 <div className="relative">
-                    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                        <Loader className="w-6 h-6 text-blue-600" />
-                    </div>
+                    {/* Outer ring (spinning) */}
+                    <div className="w-16 h-16 border-4 border-blue-100 rounded-full animate-spin"></div>
+                    {/* Inner icon (static) */}
+                    <Loader2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-blue-600 animate-spin" />
                 </div>
-                <h2 className="mt-6 text-xl font-semibold text-gray-800">Loading your files</h2>
-                <p className="mt-2 text-gray-500">Please wait while we prepare your S3 files...</p>
+                <h2 className="text-lg font-medium text-gray-800">Loading your files</h2>
+                <p className="text-sm text-gray-500 max-w-md text-center">
+                    Fetching your S3 bucket contents. This may take a moment...
+                </p>
+            </div>
+
+            {/* Skeleton Placeholder (optional) */}
+            <div className="w-full space-y-4 mt-4">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-14 bg-gray-50 rounded-md animate-pulse"></div>
+                ))}
             </div>
         </div>
     );

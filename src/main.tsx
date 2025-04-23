@@ -6,6 +6,7 @@ import { indexRoute } from "./routes/index.tsx";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { fileManagerRoute } from "./routes/file-manager.tsx";
 import { AuthProvider } from "react-oidc-context";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
 const cognitoAuthConfig = {
     authority: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_4WnB9nATu",
@@ -24,10 +25,14 @@ declare module "@tanstack/react-router" {
     }
 }
 
+export const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <AuthProvider {...cognitoAuthConfig}>
-            <RouterProvider router={router} />
+            <QueryClientProvider client={queryClient}>
+                <RouterProvider router={router} />
+            </QueryClientProvider>
         </AuthProvider>
     </StrictMode>
 );
