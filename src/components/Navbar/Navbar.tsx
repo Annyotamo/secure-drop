@@ -8,7 +8,6 @@ const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const auth = useAuth();
 
-    // Handle scroll effect
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -18,9 +17,9 @@ const Navbar = () => {
     }, []);
 
     const signOutRedirect = () => {
-        const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
-        const logoutUri = import.meta.env.VITE_COGNITO_LOGOUT_REDIRECT;
-        const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
+        const clientId = "7p984uuatg03rhaapsjt3qqkhr";
+        const logoutUri = "https://secure-drop.vercel.app/";
+        const cognitoDomain = "https://ap-south-14wnb9natu.auth.ap-south-1.amazoncognito.com";
         window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
     };
 

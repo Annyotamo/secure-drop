@@ -9,11 +9,11 @@ import { AuthProvider } from "react-oidc-context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const cognitoAuthConfig = {
-    authority: import.meta.env.VITE_COGNITO_AUTHORITY,
-    client_id: import.meta.env.VITE_COGNITO_CLIENT_ID,
-    redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI,
+    authority: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_4WnB9nATu",
+    client_id: "7p984uuatg03rhaapsjt3qqkhr",
+    redirect_uri: "https://secure-drop.vercel.app/file-manager/",
     response_type: "code",
-    scope: import.meta.env.VITE_COGNITO_SCOPE,
+    scope: "email openid phone",
 };
 
 console.log(cognitoAuthConfig);
