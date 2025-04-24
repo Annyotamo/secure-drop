@@ -172,7 +172,7 @@ const FeatureCard = ({ icon, title, description, color, delay }: FeatureCardProp
 
                 {/* Feature list */}
                 <ul className="space-y-2">
-                    {[1, 2].map((item, index) => (
+                    {[1, 2].map((index) => (
                         <motion.li
                             key={index}
                             initial={{ opacity: 0, x: -10 }}
