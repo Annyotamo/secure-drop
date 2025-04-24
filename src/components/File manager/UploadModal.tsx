@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { X, Upload, FileText, Image, FileCheck, AlertCircle } from "lucide-react";
+import { X, Upload, FileText, Image, FileCheck, AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface UploadModalProps {
     isOpen: boolean;
@@ -108,72 +108,80 @@ export default function UploadModal({ isOpen, onClose, onUpload }: UploadModalPr
         }
     };
 
+    const getFileTypeColor = (type: string) => {
+        switch (type) {
+            case "pdf":
+                return "from-red-500 to-red-600";
+            case "image":
+                return "from-green-500 to-green-600";
+            case "doc":
+                return "from-blue-500 to-blue-600";
+            default:
+                return "from-gray-500 to-gray-600";
+        }
+    };
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50">
-            <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-70 backdrop-blur-sm">
+            <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300 transform">
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b">
-                    <h3 className="text-lg font-medium text-gray-900">Upload File</h3>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-500 focus:outline-none">
-                        <X className="w-5 h-5" />
-                    </button>
+                <div className="relative px-6 py-5 border-b border-gray-100">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500"></div>
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-semibold text-gray-800">Upload File</h3>
+                        <button
+                            onClick={onClose}
+                            className="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 rounded-full hover:bg-gray-100 focus:outline-none">
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* File Type Selection */}
-                <div className="px-6 py-4 bg-gray-50">
-                    <p className="text-sm text-gray-600 mb-3">Select file type:</p>
-                    <div className="flex space-x-4">
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="fileType"
-                                value="pdf"
-                                checked={fileType === "pdf"}
-                                onChange={handleTypeChange}
-                                className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 flex items-center text-sm text-gray-700">
-                                <FileText className="w-4 h-4 text-red-500 mr-1" /> PDF
-                            </span>
-                        </label>
-
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="fileType"
-                                value="image"
-                                checked={fileType === "image"}
-                                onChange={handleTypeChange}
-                                className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 flex items-center text-sm text-gray-700">
-                                <Image className="w-4 h-4 text-green-500 mr-1" /> Image
-                            </span>
-                        </label>
-
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="fileType"
-                                value="doc"
-                                checked={fileType === "doc"}
-                                onChange={handleTypeChange}
-                                className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span className="ml-2 flex items-center text-sm text-gray-700">
-                                <FileText className="w-4 h-4 text-blue-500 mr-1" /> Word
-                            </span>
-                        </label>
+                <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-600 mb-4">Select file type:</p>
+                    <div className="flex flex-wrap gap-4">
+                        {[
+                            { value: "pdf", label: "PDF", icon: <FileText className="w-4 h-4 text-red-500" /> },
+                            { value: "image", label: "Image", icon: <Image className="w-4 h-4 text-green-500" /> },
+                            { value: "doc", label: "Word", icon: <FileText className="w-4 h-4 text-blue-500" /> },
+                        ].map((option) => (
+                            <label
+                                key={option.value}
+                                className={`flex items-center px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer ${
+                                    fileType === option.value
+                                        ? "bg-white shadow-md ring-2 ring-blue-500 ring-opacity-50"
+                                        : "bg-white border border-gray-200 hover:bg-gray-50"
+                                }`}>
+                                <input
+                                    type="radio"
+                                    name="fileType"
+                                    value={option.value}
+                                    checked={fileType === option.value}
+                                    onChange={handleTypeChange}
+                                    className="sr-only" // Hide the actual radio button
+                                />
+                                <span className="flex items-center text-sm font-medium">
+                                    {option.icon}
+                                    <span className="ml-2">{option.label}</span>
+                                    {fileType === option.value && (
+                                        <CheckCircle2 className="ml-2 w-4 h-4 text-blue-500" />
+                                    )}
+                                </span>
+                            </label>
+                        ))}
                     </div>
                 </div>
 
                 {/* Content Area */}
-                <div className="px-6 py-4">
+                <div className="px-6 py-5">
                     {!selectedFile ? (
                         /* Drop Zone */
                         <div
-                            className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                                dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
+                            className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
+                                dragActive
+                                    ? `border-blue-500 bg-blue-50`
+                                    : "border-gray-200 hover:border-blue-400 hover:bg-gray-50"
                             }`}
                             onDragEnter={handleDrag}
                             onDragLeave={handleDrag}
@@ -193,42 +201,61 @@ export default function UploadModal({ isOpen, onClose, onUpload }: UploadModalPr
                                 }
                             />
 
-                            <div className="space-y-2">
+                            <div className="space-y-4">
                                 <div className="flex justify-center">
-                                    <Upload className="w-10 h-10 text-gray-400" />
+                                    <div
+                                        className={`p-4 rounded-full bg-gradient-to-br ${getFileTypeColor(fileType)} bg-opacity-10`}>
+                                        <Upload
+                                            className={`w-10 h-10 text-${fileType === "pdf" ? "red" : fileType === "image" ? "green" : "blue"}-500`}
+                                        />
+                                    </div>
                                 </div>
-                                <p className="text-sm text-gray-500">
-                                    <span
-                                        className="font-medium text-blue-600 hover:underline cursor-pointer"
-                                        onClick={openFileSelector}>
-                                        Click to upload
-                                    </span>{" "}
-                                    or drag and drop
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                    {fileType === "pdf" && "PDF files only (.pdf)"}
-                                    {fileType === "image" && "Image files only (.jpg, .jpeg, .png, .gif, .webp)"}
-                                    {fileType === "doc" && "Word documents only (.doc, .docx)"}
-                                </p>
+                                <div>
+                                    <p className="text-base text-gray-700">
+                                        <span
+                                            className="font-medium text-blue-600 hover:text-blue-700 hover:underline cursor-pointer transition-colors"
+                                            onClick={openFileSelector}>
+                                            Click to upload
+                                        </span>{" "}
+                                        or drag and drop
+                                    </p>
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        {fileType === "pdf" && "PDF files only (.pdf)"}
+                                        {fileType === "image" && "Image files only (.jpg, .jpeg, .png, .gif, .webp)"}
+                                        {fileType === "doc" && "Word documents only (.doc, .docx)"}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     ) : (
                         /* Selected File and Name Input */
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                             {/* Selected File */}
-                            <div className="flex items-center justify-between bg-gray-50 px-4 py-3 rounded">
-                                <div className="flex items-center">
-                                    <FileCheck className="w-5 h-5 text-green-500 mr-2" />
-                                    <span className="text-sm text-gray-700 truncate max-w-xs">{selectedFile.name}</span>
+                            <div className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-white px-5 py-4 rounded-lg border border-gray-100 shadow-sm">
+                                <div className="flex items-center overflow-hidden">
+                                    <div
+                                        className={`p-2 mr-3 rounded-lg bg-gradient-to-br ${getFileTypeColor(fileType)} bg-opacity-90`}>
+                                        <FileCheck className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div className="overflow-hidden">
+                                        <span className="text-sm font-medium text-gray-700 block truncate max-w-xs">
+                                            {selectedFile.name}
+                                        </span>
+                                        <span className="text-xs text-gray-500">
+                                            {(selectedFile.size / 1024).toFixed(1)} KB
+                                        </span>
+                                    </div>
                                 </div>
-                                <button onClick={clearSelection} className="text-gray-400 hover:text-red-500">
+                                <button
+                                    onClick={clearSelection}
+                                    className="text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-red-50 transition-colors duration-200">
                                     <X className="w-4 h-4" />
                                 </button>
                             </div>
 
                             {/* File Name Input */}
                             <div>
-                                <label htmlFor="fileName" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="fileName" className="block text-sm font-medium text-gray-700 mb-2">
                                     Name your file:
                                 </label>
                                 <input
@@ -236,7 +263,7 @@ export default function UploadModal({ isOpen, onClose, onUpload }: UploadModalPr
                                     id="fileName"
                                     value={fileName}
                                     onChange={(e) => setFileName(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                                     placeholder="Enter file name (without extension)"
                                 />
                             </div>
@@ -245,27 +272,29 @@ export default function UploadModal({ isOpen, onClose, onUpload }: UploadModalPr
 
                     {/* Error Message */}
                     {error && (
-                        <div className="mt-2 flex items-center text-sm text-red-600">
-                            <AlertCircle className="w-4 h-4 mr-1" />
-                            {error}
+                        <div className="mt-3 flex items-center text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+                            <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                            <span>{error}</span>
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-3">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
                         Cancel
                     </button>
                     <button
                         onClick={handleUpload}
                         disabled={!selectedFile}
-                        className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                            !selectedFile ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                        className={`px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                            !selectedFile
+                                ? "bg-blue-300 cursor-not-allowed"
+                                : "bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-md hover:shadow-lg"
                         }`}>
-                        Upload
+                        {selectedFile ? "Upload File" : "Upload"}
                     </button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { File, RefreshCw } from "lucide-react";
+import { File } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import Functionalities from "./Functionalities";
@@ -99,7 +99,7 @@ export default function FileManager() {
     return (
         <div className="flex-grow bg-white">
             <div className="container mx-auto px-4 py-8">
-                <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between mt-20">
                     <h1 className="text-2xl md:text-3xl font-bold text-blue-900 mb-4 md:mb-0">Your S3 Files</h1>
                     <Functionalities
                         searchQuery={searchQuery}

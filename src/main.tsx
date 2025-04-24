@@ -6,14 +6,14 @@ import { indexRoute } from "./routes/index.tsx";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { fileManagerRoute } from "./routes/file-manager.tsx";
 import { AuthProvider } from "react-oidc-context";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const cognitoAuthConfig = {
-    authority: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_4WnB9nATu",
-    client_id: "7p984uuatg03rhaapsjt3qqkhr",
-    redirect_uri: "http://localhost:3000/file-manager",
+    authority: import.meta.env.VITE_COGNITO_AUTHORITY,
+    client_id: import.meta.env.VITE_COGNITO_CLIENT_ID,
+    redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI,
     response_type: "code",
-    scope: "email openid phone",
+    scope: import.meta.env.VITE_COGNITO_SCOPE,
 };
 
 const routeTree = rootRoute.addChildren([indexRoute, fileManagerRoute]);

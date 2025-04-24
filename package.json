@@ -14,6 +14,7 @@
     "@tanstack/react-query": "^5.74.4",
     "@tanstack/react-router": "^1.116.0",
     "@tanstack/react-router-devtools": "^1.116.0",
+    "framer-motion": "^12.8.0",
     "lucide-react": "^0.488.0",
     "oidc-client-ts": "^3.2.0",
     "react": "^19.0.0",

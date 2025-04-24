@@ -30,40 +30,46 @@ const Functionalities = ({
     };
 
     return (
-        <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
-            <div className="relative">
-                <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <div className="flex flex-col w-full lg:w-auto md:flex-row gap-4">
+            <div className="relative w-full md:w-64 lg:w-80">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Search className="h-4 w-4 text-gray-400" />
+                </div>
                 <input
                     type="text"
                     placeholder="Search files..."
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
-            <button
-                onClick={handleRefresh}
-                className="flex items-center justify-center px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 hover:cursor-pointer disabled:opacity-50"
-                disabled={isUploading}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
-            </button>
-            <button
-                onClick={handleFileUpload}
-                className="flex items-center justify-center px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 disabled:opacity-50 hover:cursor-pointer"
-                disabled={isUploading}>
-                {isUploading ? (
-                    <>
-                        <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                        Uploading...
-                    </>
-                ) : (
-                    <>
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload Files
-                    </>
-                )}
-            </button>
+
+            <div className="flex gap-3 w-full md:w-auto">
+                <button
+                    onClick={handleRefresh}
+                    className="flex items-center justify-center px-4 py-2.5 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-200 font-medium flex-1 md:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isUploading}>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <span>Refresh</span>
+                </button>
+
+                <button
+                    onClick={handleFileUpload}
+                    className={`flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md font-medium flex-1 md:flex-none disabled:opacity-60 disabled:cursor-not-allowed ${isUploading ? "animate-pulse" : ""}`}
+                    disabled={isUploading}>
+                    {isUploading ? (
+                        <div className="flex items-center">
+                            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                            <span>Uploading...</span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center">
+                            <Upload className="h-4 w-4 mr-2" />
+                            <span>Upload Files</span>
+                        </div>
+                    )}
+                </button>
+            </div>
         </div>
     );
 };
