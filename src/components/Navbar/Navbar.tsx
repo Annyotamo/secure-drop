@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { Shield, Menu, X, ChevronRight } from "lucide-react";
 import { useAuth } from "react-oidc-context";
 import { motion, AnimatePresence } from "framer-motion";
 

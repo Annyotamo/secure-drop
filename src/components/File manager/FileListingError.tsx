@@ -1,5 +1,3 @@
-import React from "react";
-
 const FileListingError = ({ errorMessage }: { errorMessage: string }) => {
     return (
         <div className="bg-white rounded-lg shadow overflow-hidden">

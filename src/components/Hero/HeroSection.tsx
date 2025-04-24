@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Upload, ArrowRight, ShieldCheck } from "lucide-react";
 import { useAuth } from "react-oidc-context";
 import { motion } from "framer-motion";
