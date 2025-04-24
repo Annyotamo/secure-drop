@@ -16,6 +16,8 @@ const cognitoAuthConfig = {
     scope: import.meta.env.VITE_COGNITO_SCOPE,
 };
 
+console.log(cognitoAuthConfig);
+
 const routeTree = rootRoute.addChildren([indexRoute, fileManagerRoute]);
 const router = createRouter({ routeTree });
 
