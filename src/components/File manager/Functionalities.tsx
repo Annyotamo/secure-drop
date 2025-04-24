@@ -1,14 +1,34 @@
 import { RefreshCw, Search, Upload } from "lucide-react";
 import React from "react";
+import { queryClient } from "../../main";
 
 interface functionalityPropTypes {
     searchQuery: string;
     setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
     handleFileUpload: () => void;
     isUploading: boolean;
+    setIsRefreshing: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Functionalities = ({ searchQuery, setSearchQuery, handleFileUpload, isUploading }: functionalityPropTypes) => {
+const Functionalities = ({
+    searchQuery,
+    setSearchQuery,
+    handleFileUpload,
+    isUploading,
+    setIsRefreshing,
+}: functionalityPropTypes) => {
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await queryClient.invalidateQueries({ queryKey: ["s3-data"] });
+        } catch (error) {
+            console.error("Refresh failed:", error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
     return (
         <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
             <div className="relative">
@@ -22,17 +42,15 @@ const Functionalities = ({ searchQuery, setSearchQuery, handleFileUpload, isUplo
                 />
             </div>
             <button
-                onClick={() => {
-                    // Implement your refresh logic here
-                    console.log("Refreshing files");
-                }}
-                className="flex items-center justify-center px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50">
+                onClick={handleRefresh}
+                className="flex items-center justify-center px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 hover:cursor-pointer disabled:opacity-50"
+                disabled={isUploading}>
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
             </button>
             <button
                 onClick={handleFileUpload}
-                className="flex items-center justify-center px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800"
+                className="flex items-center justify-center px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 disabled:opacity-50 hover:cursor-pointer"
                 disabled={isUploading}>
                 {isUploading ? (
                     <>

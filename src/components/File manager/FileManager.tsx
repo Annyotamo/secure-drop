@@ -1,4 +1,4 @@
-import { File } from "lucide-react";
+import { File, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import Functionalities from "./Functionalities";
@@ -8,6 +8,8 @@ import UploadModal from "./UploadModal";
 import { useFileUpload } from "../../hooks/useFileUpload";
 import FileListing from "./FileListing";
 import { queryClient } from "../../main";
+import FileListingLoading from "./FileListingLoading";
+import { useMutation } from "@tanstack/react-query";
 
 interface FileItem {
     id: number;
@@ -25,6 +27,7 @@ export default function FileManager() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
     useEffect(() => {
         if (auth.user) {
@@ -46,6 +49,27 @@ export default function FileManager() {
         }
     }
 
+    const deleteFileMutation = useMutation({
+        mutationFn: async ({ name, type }: { name: string; type: string }) => {
+            const res = await fetch(
+                `https://vib7rvzf3a.execute-api.ap-south-1.amazonaws.com/dev/upload?fileName=${name}.${type}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Auth-Token": auth.user?.id_token || "",
+                    },
+                }
+            );
+            return await res.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["s3-data"] });
+        },
+        onError: (error) => {
+            console.error("Delete failed:", error);
+        },
+    });
+
     async function handleUploadComplete(file: File, fileName: string, fileType: string) {
         setIsUploading(true);
 
@@ -60,19 +84,9 @@ export default function FileManager() {
         }, 2000);
     }
 
-    async function handleDeleteFile(name: string, type: string) {
-        const res = await fetch(
-            `https://vib7rvzf3a.execute-api.ap-south-1.amazonaws.com/dev/upload?fileName=${name}.${type}`,
-            {
-                method: "DELETE",
-                headers: {
-                    "Auth-Token": auth.user?.id_token || "",
-                },
-            }
-        );
-        queryClient.invalidateQueries({ queryKey: ["s3-data"] });
-        console.log(await res.json());
-    }
+    const handleDeleteFile = (name: string, type: string) => {
+        deleteFileMutation.mutate({ name, type });
+    };
 
     if (isLoading) {
         return <LoadingUI />;
@@ -92,14 +106,22 @@ export default function FileManager() {
                         setSearchQuery={setSearchQuery}
                         isUploading={isUploading}
                         handleFileUpload={() => setIsUploadModalOpen(true)}
+                        setIsRefreshing={setIsRefreshing}
                     />
                 </div>
 
-                {/* File Listing */}
-                <FileListing getFileIcon={getFileIcon} searchQuery={searchQuery} handleDeleteFile={handleDeleteFile} />
+                {isRefreshing ? (
+                    <FileListingLoading />
+                ) : (
+                    <FileListing
+                        getFileIcon={getFileIcon}
+                        searchQuery={searchQuery}
+                        handleDeleteFile={handleDeleteFile}
+                        isDeleting={deleteFileMutation.isPending}
+                    />
+                )}
             </div>
 
-            {/* Upload Modal */}
             <UploadModal
                 isOpen={isUploadModalOpen}
                 onClose={() => setIsUploadModalOpen(false)}
