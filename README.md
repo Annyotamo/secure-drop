@@ -149,8 +149,27 @@
 
     <h2>Project Structure</h2>
     <div class="structure">
-
-project-root/ ├── client/ # Frontend React application │ ├── src/ │ │ ├── components/ # Reusable UI components │ │ ├── pages/ # Application pages │ │ ├── hooks/ # Custom React hooks │ │ ├── lib/ # Utility functions, API clients │ │ ├── styles/ # Global styles │ │ ├── App.jsx # Main application component │ │ └── main.jsx # Application entry point │ ├── public/ # Static assets │ ├── vite.config.js # Vite configuration │ └── package.json # Frontend dependencies │ ├── infrastructure/ # AWS CDK or SAM templates │ ├── lambda/ # Lambda function code │ └── template.yaml # CloudFormation/SAM template │ ├── .env.example # Environment variables template └── README.md # Project documentation </div>
+project-root/
+├── client/               # Frontend React application
+│   ├── src/
+│   │   ├── components/   # Reusable UI components
+│   │   ├── pages/        # Application pages
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── lib/          # Utility functions, API clients
+│   │   ├── styles/       # Global styles
+│   │   ├── App.jsx       # Main application component
+│   │   └── main.jsx      # Application entry point
+│   ├── public/           # Static assets
+│   ├── vite.config.js    # Vite configuration
+│   └── package.json      # Frontend dependencies
+│
+├── infrastructure/       # AWS CDK or SAM templates
+│   ├── lambda/           # Lambda function code
+│   └── template.yaml     # CloudFormation/SAM template
+│
+├── .env.example          # Environment variables template
+└── README.md             # Project documentation
+    </div>
 
     <h2>Setup Instructions</h2>
     <h3>Prerequisites</h3>
@@ -168,14 +187,21 @@ project-root/ ├── client/ # Frontend React application │ ├── src/ 
         </li>
         <li>Install dependencies:
             <pre><code>npm install
-
 # or
-
-yarn install</code></pre> </li> <li>Create a <code>.env</code> file based on <code>.env.example</code> and fill in your AWS Cognito details: <pre>VITE_AWS_REGION=your_aws_region VITE_USER_POOL_ID=your_cognito_user_pool_id VITE_USER_POOL_CLIENT_ID=your_cognito_client_id VITE_API_GATEWAY_URL=your_api_gateway_endpoint</pre> </li> <li>Start the development server: <pre><code>npm run dev
-
+yarn install</code></pre>
+        </li>
+        <li>Create a <code>.env</code> file based on <code>.env.example</code> and fill in your AWS Cognito details:
+            <pre>VITE_AWS_REGION=your_aws_region
+VITE_USER_POOL_ID=your_cognito_user_pool_id
+VITE_USER_POOL_CLIENT_ID=your_cognito_client_id
+VITE_API_GATEWAY_URL=your_api_gateway_endpoint</pre>
+        </li>
+        <li>Start the development server:
+            <pre><code>npm run dev
 # or
-
-yarn dev</code></pre> </li> </ol>
+yarn dev</code></pre>
+        </li>
+    </ol>
 
     <h3>Backend Deployment</h3>
     <ol>
@@ -185,16 +211,14 @@ yarn dev</code></pre> </li> </ol>
         </li>
         <li>Deploy the backend:
             <pre><code>sam deploy --guided
-
 # or use CDK deploy if using AWS CDK</code></pre>
-
         </li>
         <li>Note the API Gateway endpoint and update your frontend <code>.env</code> file.</li>
     </ol>
 
     <h2>Environment Variables</h2>
     <p>The following environment variables are required:</p>
-
+    
     <h3>Frontend</h3>
     <ul>
         <li><code>VITE_AWS_REGION</code>: AWS region where resources are deployed</li>
@@ -221,19 +245,19 @@ yarn dev</code></pre> </li> </ol>
 
     <h2>API Endpoints</h2>
     <p>All endpoints require a valid Cognito ID token in the Authorization header.</p>
-
+    
     <div class="endpoint">
         <span class="endpoint-method post">POST</span> <code>/upload</code> - Upload an image to user's S3 folder
     </div>
-
+    
     <div class="endpoint">
         <span class="endpoint-method get">GET</span> <code>/images</code> - List all images for the authenticated user
     </div>
-
+    
     <div class="endpoint">
         <span class="endpoint-method get">GET</span> <code>/download/{imageKey}</code> - Download a specific image
     </div>
-
+    
     <div class="endpoint">
         <span class="endpoint-method delete">DELETE</span> <code>/delete/{imageKey}</code> - Delete a specific image
     </div>
@@ -268,6 +292,5 @@ yarn dev</code></pre> </li> </ol>
         <li>Vite team for the fantastic build tool</li>
         <li>Tailwind CSS for utility-first styling</li>
     </ul>
-
 </body>
 </html>
