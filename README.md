@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Cloud-Based Image Management Application</h1>
+    <h1>Cloud-Based File Management Application (Secure-Drop) </h1>
     <div >
         <h2>Overview</h2>
-        <p>This project is a cloud-based web application that allows users to upload, download, and manage images securely. The application features a modern React frontend with a serverless AWS backend architecture.</p>
+        <p>This project is a cloud-based web application that allows users to upload, download, and manage files (.pdf, .jpeg, .doc, ...others) securely. The application features a modern React frontend with a serverless AWS backend architecture.</p>
     </div>
     <h2>Features</h2>
     <ul>
         <li><strong>User Authentication</strong>: Secure login/signup using AWS Cognito</li>
         <li><strong>Image Management</strong>:
             <ul>
-                <li>Upload images to personal S3 folders</li>
+                <li>Upload files to personal S3 folders</li>
                 <li>Download stored images</li>
                 <li>Delete images</li>
             </ul>
