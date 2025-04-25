@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Cloud-Based File Management Application (Secure-Drop) </h1>
-    ![Web image](https://drive.google.com/file/d/1Yyv27-XKMrsr909RxzFDijk45N5EyuMb/view?usp=sharing)
+    <img src="https://drive.google.com/file/d/1Yyv27-XKMrsr909RxzFDijk45N5EyuMb/view?usp=sharing"/>
     <a href="https://secure-drop.vercel.app">Web Link</a>
     <div >
         <h2>Overview</h2>
